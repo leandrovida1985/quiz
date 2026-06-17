@@ -84,15 +84,17 @@
   .dicaBtn2:disabled { color: var(--muted); cursor: default; }
   .dicaBtn2:active { transform: translateY(1px); }
 
-  .qnav { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-top: 1px solid var(--line); }
-  .navbtn { background: var(--key); border: none; border-radius: 9px; padding: 10px 12px; font-size: 13px; font-weight: 800; color: var(--ink); cursor: pointer; }
+  .qcount { font-size: 12px; color: var(--muted); font-weight: 700; }
+  .qcount b { color: var(--ink); }
+  .dots { display: flex; justify-content: center; gap: 7px; flex-wrap: wrap; padding: 10px 14px 0; }
+  .dot { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--tile-border); background: #fff; cursor: pointer; font-size: 11px; font-weight: 800; color: var(--muted); }
+  .dot.resp { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .dot.atual { box-shadow: 0 0 0 3px rgba(194,73,47,.28); }
+  .qnav { display: flex; gap: 10px; padding: 10px 14px 18px; border-top: 1px solid var(--line); }
+  .qnav .navbtn { flex: 1; border: none; border-radius: 11px; padding: 14px; font-size: 15px; font-weight: 800; cursor: pointer; }
+  .navbtn.ghost { background: var(--key); color: var(--ink); }
+  .navbtn.prim { background: var(--accent); color: #fff; }
   .navbtn:disabled { opacity: .4; cursor: default; }
-  .dots { flex: 1; display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
-  .dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--tile-border); background: #fff; cursor: pointer; font-size: 0; }
-  .dot.resp { background: var(--accent); border-color: var(--accent); }
-  .dot.atual { box-shadow: 0 0 0 3px rgba(194,73,47,.25); }
-
-  .enviarwrap { padding: 8px 14px 16px; }
   .btn { border: none; border-radius: 10px; padding: 13px 18px; font-size: 15px; font-weight: 700; cursor: pointer; background: var(--accent); color: #fff; width: 100%; }
   .btn.ghost { background: var(--key); color: var(--ink); margin-top: 6px; }
 
@@ -167,8 +169,8 @@
   <div class="screen" id="gameScreen">
     <div class="qtop">
       <div class="qtoprow">
-        <span><span id="qcat" class="catbadge"></span></span>
-        <span><span id="qnum">1</span>/10 · <span id="qdicas">0 dicas</span></span>
+        <span id="qcat" class="catbadge"></span>
+        <span class="qcount">Pergunta <b id="qnum">1</b> de 10</span>
       </div>
       <div class="qbar-wrap"><div id="qbar"></div></div>
     </div>
@@ -177,12 +179,11 @@
       <div class="opcoes" id="opcoes"></div>
       <button class="dicaBtn2" id="dicaBtn">💡 Eliminar uma opção (−20)</button>
     </div>
+    <div class="dots" id="dots"></div>
     <div class="qnav">
-      <button class="navbtn" id="antBtn">‹</button>
-      <div class="dots" id="dots"></div>
-      <button class="navbtn" id="proxBtn">›</button>
+      <button class="navbtn ghost" id="antBtn">‹ Anterior</button>
+      <button class="navbtn prim" id="proxBtn">Próxima ›</button>
     </div>
-    <div class="enviarwrap"><button class="btn" id="enviarBtn">Revisar e enviar respostas</button></div>
   </div>
 
   <div class="toast" id="toast"></div>
@@ -299,21 +300,25 @@ async function entrar(nome, pin){
   return { nome, pin, total:j.total, dias:j.dias, jogadas:j.jogadas||{} };
 }
 
-async function registrarDia(data, pontos){
-  if(!jogador) return;
-  if(SB_OK){
-    try {
-      const rows = await rpc("registrar_dia_quiz", { p_nome: jogador.nome, p_pin: jogador.pin, p_data: data, p_pontos: pontos });
-      const d = Array.isArray(rows) ? rows[0] : rows;
-      if(d){ jogador.total=d.total; jogador.dias=d.dias; jogador.jogadas=d.jogadas||jogador.jogadas; }
-      return;
-    } catch(e){ console.error(e); return; }
-  }
+function salvarLocalResultado(data, pontos){
   const db=localDB();
   const j=db[jogador.nome] || { pin:jogador.pin, total:0, dias:0, jogadas:{} };
   if(!(data in (j.jogadas||{}))){ j.jogadas=j.jogadas||{}; j.jogadas[data]=pontos; j.total=(j.total||0)+Math.max(pontos,0); j.dias=(j.dias||0)+1; }
   db[jogador.nome]=j; salvarLocalDB(db);
   jogador.total=j.total; jogador.dias=j.dias; jogador.jogadas=j.jogadas;
+}
+async function registrarDia(data, pontos){
+  if(!jogador) return "convidado";
+  if(SB_OK){
+    try {
+      const rows = await rpc("registrar_dia_quiz", { p_nome: jogador.nome, p_pin: jogador.pin, p_data: data, p_pontos: pontos });
+      const d = Array.isArray(rows) ? rows[0] : rows;
+      if(d){ jogador.total=d.total; jogador.dias=d.dias; jogador.jogadas=d.jogadas||jogador.jogadas; }
+      return "ok";
+    } catch(e){ console.error(e); salvarLocalResultado(data, pontos); return "erro"; }
+  }
+  salvarLocalResultado(data, pontos);
+  return "local";
 }
 
 async function carregarPlacar(){
@@ -387,7 +392,6 @@ function renderPergunta(){
   const p=jogo.puzzle; const i=jogo.idx; const q=p.perguntas[i]; const n=p.perguntas.length;
   document.getElementById("qcat").textContent = q.categoria || "Pergunta";
   document.getElementById("qnum").textContent = (i+1);
-  document.getElementById("qdicas").textContent = totalElim()===0 ? "0 dicas" : `${totalElim()} ${totalElim()===1?"dica":"dicas"}`;
   document.getElementById("qbar").style.width = (100*(i+1)/n)+"%";
   document.getElementById("pergunta").textContent = q.pergunta;
 
@@ -405,13 +409,14 @@ function renderPergunta(){
   db.textContent = podeDica ? `💡 Eliminar uma opção (−${PEN_ELIM})` : "Sem mais dicas nesta pergunta";
 
   document.getElementById("antBtn").disabled = (i===0);
-  document.getElementById("proxBtn").disabled = (i===n-1);
+  const prox=document.getElementById("proxBtn");
+  prox.textContent = (i===n-1) ? "Enviar respostas ✓" : "Próxima ›";
 
   const dots=document.getElementById("dots");
   dots.innerHTML = p.perguntas.map((_,di)=>{
     const resp = jogo.respostas[di]!==null ? " resp" : "";
     const at = di===i ? " atual" : "";
-    return `<button class="dot${resp}${at}" data-di="${di}"></button>`;
+    return `<button class="dot${resp}${at}" data-di="${di}">${di+1}</button>`;
   }).join("");
   dots.querySelectorAll(".dot").forEach(d=> d.onclick=()=>{ jogo.idx=+d.dataset.di; renderPergunta(); });
 }
@@ -467,8 +472,8 @@ function finalizar(){
   const elim=totalElim();
   const pontos = Math.max(BASE - erradas*PEN_ERRADA - brancas*PEN_BRANCO - elim*PEN_ELIM, 0);
   limparJogo(jogo.data);
-  registrarDia(jogo.data, pontos).then(()=>{
-    mostrarResultado(jogo.data, pontos, { certas, erradas, brancas, elim, respostas: jogo.respostas.slice() });
+  registrarDia(jogo.data, pontos).then((status)=>{
+    mostrarResultado(jogo.data, pontos, { certas, erradas, brancas, elim, respostas: jogo.respostas.slice(), status });
   });
 }
 
@@ -484,6 +489,10 @@ function mostrarResultado(data, pontos, opts){
     sub = `Você acertou <span class="big">${opts.certas}</span> de 10 e fez <span class="big">${pontos}</span> pontos.`;
     if(jogador) sub += `<br>Seu total: <span class="big">${jogador.total}</span> pts em ${jogador.dias} ${jogador.dias===1?"dia":"dias"}.`;
     else sub += `<br>Entre com nome e PIN para salvar seu placar.`;
+    const st = opts.status;
+    if(jogador && st==="ok") sub += `<br><span style="color:var(--certo);font-weight:700">✓ Salvo no placar</span>`;
+    else if(jogador && st==="erro") sub += `<br><span style="color:var(--erro);font-weight:700">⚠️ Não salvou no placar online (guardei neste aparelho). Confira seu PIN — talvez ele não bata com o do servidor.</span>`;
+    else if(jogador && st==="local") sub += `<br><span style="color:var(--muted)">Salvo neste aparelho (placar online desligado).</span>`;
   }
   document.getElementById("fimSub").innerHTML = sub;
 
@@ -558,9 +567,8 @@ function jogarConvidado(){ jogador=null; try{ localStorage.removeItem(LS_SESSION
 
 // ===== Eventos =====
 document.getElementById("antBtn").onclick=()=>{ if(jogo.idx>0){ jogo.idx--; renderPergunta(); } };
-document.getElementById("proxBtn").onclick=()=>{ if(jogo.idx<jogo.puzzle.perguntas.length-1){ jogo.idx++; renderPergunta(); } };
+document.getElementById("proxBtn").onclick=()=>{ if(jogo.idx < jogo.puzzle.perguntas.length-1){ jogo.idx++; renderPergunta(); } else { enviar(); } };
 document.getElementById("dicaBtn").onclick=pedirDica;
-document.getElementById("enviarBtn").onclick=enviar;
 document.getElementById("voltarBtn").onclick=()=>{ renderMenu(); mostrarTela("menuScreen"); };
 
 document.getElementById("rankBtn").onclick=verPlacar;
