@@ -1,213 +1,33 @@
 // Banco de perguntas do Quiz. NÃO abra se você for jogar! 🤫
 window.QUIZ_PUZZLES = {
-  "2026-06-16": {
-    titulo: "Quiz do dia",
-    perguntas: [
-      {
-        categoria: "Em alta",
-        pergunta: "A Copa do Mundo de futebol de 2026, em andamento neste mês, é a primeira da história organizada por três países anfitriões simultaneamente. Quais são eles?",
-        opcoes: [
-          "Estados Unidos, México e Canadá",
-          "Estados Unidos, México e Guatemala",
-          "Canadá, Estados Unidos e Costa Rica",
-          "México, Estados Unidos e Cuba"
-        ],
-        correta: 0,
-        explicacao: "A FIFA confirmou Estados Unidos, México e Canadá como os três anfitriões da Copa de 2026, a primeira sediada por três países.",
-        fonte: "Wikipédia — Copa do Mundo FIFA de 2026",
-        fonteUrl: "https://pt.wikipedia.org/wiki/Copa_do_Mundo_FIFA_de_2026"
-      },
-      {
-        categoria: "Em alta",
-        pergunta: "O jogo de abertura da Copa do Mundo de 2026, no dia 11 de junho, foi disputado em qual estádio?",
-        opcoes: [
-          "Rose Bowl, em Los Angeles",
-          "MetLife Stadium, em Nova Jersey",
-          "Estádio Azteca, na Cidade do México",
-          "BMO Field, em Toronto"
-        ],
-        correta: 2,
-        explicacao: "A abertura ocorreu no Estádio Azteca, na Cidade do México, que também recebeu as aberturas de 1970 e 1986.",
-        fonte: "FIFA — jogo de abertura da Copa 2026",
-        fonteUrl: "https://www.fifa.com/pt/tournaments/mens/worldcup/canadamexicousa2026/articles/estadio-azteca-cidade-do-mexico-sede-jogo-de-abertura-copa-do-mundo-2026"
-      },
-      {
-        categoria: "Em alta",
-        pergunta: "Quem recebeu o Prêmio Nobel da Paz de 2025, anunciado em outubro daquele ano?",
-        opcoes: [
-          "Volodymyr Zelensky",
-          "María Corina Machado",
-          "Juan Guaidó",
-          "Greta Thunberg"
-        ],
-        correta: 1,
-        explicacao: "A opositora venezuelana María Corina Machado foi laureada pelo trabalho em prol dos direitos democráticos na Venezuela.",
-        fonte: "Wikipédia — Prémio Nobel da Paz de 2025",
-        fonteUrl: "https://pt.wikipedia.org/wiki/Pr%C3%A9mio_Nobel_da_Paz_de_2025"
-      },
-      {
-        categoria: "Lógica",
-        pergunta: "Complete a sequência: 2, 6, 12, 20, 30, ?",
-        opcoes: ["40", "42", "36", "44"],
-        correta: 1,
-        explicacao: "Cada termo é n×(n+1): 1×2, 2×3, 3×4, 4×5, 5×6 e 6×7 = 42; as diferenças crescem de 2 em 2 (4, 6, 8, 10, 12).",
-        fonte: "",
-        fonteUrl: ""
-      },
-      {
-        categoria: "Lógica",
-        pergunta: "Um tijolo pesa 1 quilo mais meio tijolo. Quanto pesa o tijolo inteiro?",
-        opcoes: ["1,5 kg", "2 kg", "1 kg", "3 kg"],
-        correta: 1,
-        explicacao: "Se tijolo = 1 kg + meio tijolo, então meio tijolo = 1 kg, logo o tijolo inteiro pesa 2 kg.",
-        fonte: "",
-        fonteUrl: ""
-      },
-      {
-        categoria: "Lógica",
-        pergunta: "Numa sala há 4 pessoas. Cada uma cumprimenta cada outra uma única vez com um aperto de mãos. Quantos apertos de mão acontecem no total?",
-        opcoes: ["12", "8", "6", "4"],
-        correta: 2,
-        explicacao: "São combinações de 4 elementos tomados 2 a 2: 4×3÷2 = 6 apertos de mão.",
-        fonte: "",
-        fonteUrl: ""
-      },
-      {
-        categoria: "Conhecimentos gerais",
-        pergunta: "Qual elemento químico tem o símbolo 'Na' na tabela periódica?",
-        opcoes: ["Nitrogênio", "Níquel", "Sódio", "Neônio"],
-        correta: 2,
-        explicacao: "O símbolo Na vem do latim 'natrium' e corresponde ao sódio.",
-        fonte: "Wikipédia — Sódio",
-        fonteUrl: "https://pt.wikipedia.org/wiki/S%C3%B3dio"
-      },
-      {
-        categoria: "Conhecimentos gerais",
-        pergunta: "Em que ano caiu o Muro de Berlim, marcando o fim simbólico da divisão da Alemanha na Guerra Fria?",
-        opcoes: ["1991", "1985", "1989", "1987"],
-        correta: 2,
-        explicacao: "O Muro de Berlim caiu em 9 de novembro de 1989, e a reunificação alemã se completou em 1990.",
-        fonte: "Wikipédia — Queda do Muro de Berlim",
-        fonteUrl: "https://pt.wikipedia.org/wiki/Queda_do_Muro_de_Berlim"
-      },
-      {
-        categoria: "Conhecimentos gerais",
-        pergunta: "Qual é o rio mais extenso da Ásia e o terceiro mais longo do mundo?",
-        opcoes: ["Yangtzé", "Mekong", "Ganges", "Amarelo (Huang He)"],
-        correta: 0,
-        explicacao: "O rio Yangtzé (Chang Jiang), na China, é o mais longo da Ásia e o terceiro do mundo, atrás de Nilo e Amazonas.",
-        fonte: "Wikipédia — Rio Yangtzé",
-        fonteUrl: "https://pt.wikipedia.org/wiki/Rio_Yangtz%C3%A9"
-      },
-      {
-        categoria: "Conhecimentos gerais",
-        pergunta: "Quem pintou o teto da Capela Sistina, no Vaticano?",
-        opcoes: ["Rafael", "Donatello", "Sandro Botticelli", "Michelangelo"],
-        correta: 3,
-        explicacao: "Michelangelo pintou o teto da Capela Sistina entre 1508 e 1512, a pedido do papa Júlio II.",
-        fonte: "Wikipédia — Teto da Capela Sistina",
-        fonteUrl: "https://pt.wikipedia.org/wiki/Teto_da_Capela_Sistina"
-      }
-    ]
-  },
   "2026-06-17": {
     titulo: "Quiz do dia",
     perguntas: [
-      {
-        categoria: "Em alta",
-        pergunta: "A Copa do Mundo de 2026, em disputa neste mês, é a primeira com 48 seleções e será realizada em quantas cidades-sede ao todo, somando os três países?",
-        opcoes: ["12 cidades", "14 cidades", "16 cidades", "20 cidades"],
-        correta: 2,
-        explicacao: "A FIFA distribuiu o torneio por 16 cidades-sede: 11 nos Estados Unidos, 3 no México e 2 no Canadá.",
-        fonte: "Lance — 16 cidades-sede da Copa de 2026",
-        fonteUrl: "https://www.lance.com.br/copa-do-mundo/guia-lance-conheca-as-16-cidades-sede-da-copa-do-mundo-de-2026.html"
-      },
-      {
-        categoria: "Em alta",
-        pergunta: "Em maio de 2026, qual clube venceu a final da Liga dos Campeões da UEFA, batendo o Arsenal nos pênaltis em Budapeste?",
-        opcoes: ["Real Madrid", "Manchester City", "Paris Saint-Germain", "Bayern de Munique"],
-        correta: 2,
-        explicacao: "O Paris Saint-Germain venceu o Arsenal nos pênaltis por 4–3 na Puskás Aréna, conquistando o bicampeonato consecutivo.",
-        fonte: "UEFA — Paris vence a Champions League 2025/26",
-        fonteUrl: "https://pt.uefa.com/uefachampionsleague/news/02a5-20902a0d2687-58f6798b20df-1000--paris-vence-a-champions-league-conheca-o-vencedor-de-2025-26/"
-      },
-      {
-        categoria: "Em alta",
-        pergunta: "Qual filme venceu o prêmio de Melhor Filme no Oscar 2026, realizado em março de 2026?",
-        opcoes: ["O Agente Secreto", "Uma Batalha Após a Outra", "Anora", "Oppenheimer"],
-        correta: 1,
-        explicacao: "'Uma Batalha Após a Outra', de Paul Thomas Anderson, venceu Melhor Filme no Oscar 2026, levando seis estatuetas.",
-        fonte: "CNN Brasil — vencedores do Oscar 2026",
-        fonteUrl: "https://www.cnnbrasil.com.br/entretenimento/oscar-2026-confira-a-lista-completa-de-vencedores/"
-      },
-      {
-        categoria: "Lógica",
-        pergunta: "Se todos os Bloops são Razzies e alguns Razzies são Lazzies, qual afirmação é necessariamente verdadeira?",
-        opcoes: [
-          "Todos os Bloops são Lazzies",
-          "Alguns Bloops são Lazzies",
-          "Todos os Bloops são Razzies",
-          "Nenhum Razzie é Bloop"
-        ],
-        correta: 2,
-        explicacao: "Só a premissa 'todos os Bloops são Razzies' garante conclusão certa; as demais não decorrem necessariamente.",
-        fonte: "",
-        fonteUrl: ""
-      },
-      {
-        categoria: "Lógica",
-        pergunta: "Uma camisa custa R$ 100. Numa promoção, o preço sobe 10% e em seguida cai 10% sobre o novo valor. Quanto passa a custar?",
-        opcoes: ["R$ 100", "R$ 99", "R$ 101", "R$ 98"],
-        correta: 1,
-        explicacao: "100 × 1,10 = 110; depois 110 × 0,90 = 99, pois a queda incide sobre um valor maior.",
-        fonte: "",
-        fonteUrl: ""
-      },
-      {
-        categoria: "Lógica",
-        pergunta: "São 3h00 em ponto num relógio analógico. Qual é o ângulo formado entre os ponteiros das horas e dos minutos?",
-        opcoes: ["60°", "90°", "120°", "45°"],
-        correta: 1,
-        explicacao: "Às 3h00 o ponteiro dos minutos aponta para o 12 e o das horas para o 3, formando exatamente 90° (3 × 30°).",
-        fonte: "",
-        fonteUrl: ""
-      },
-      {
-        categoria: "Conhecimentos gerais",
-        pergunta: "Qual é o maior planeta do Sistema Solar?",
-        opcoes: ["Júpiter", "Saturno", "Netuno", "Urano"],
-        correta: 0,
-        explicacao: "Júpiter é o maior planeta do Sistema Solar, com massa maior que a de todos os outros planetas somados.",
-        fonte: "Wikipédia — Júpiter (planeta)",
-        fonteUrl: "https://pt.wikipedia.org/wiki/J%C3%BApiter_(planeta)"
-      },
-      {
-        categoria: "Conhecimentos gerais",
-        pergunta: "Em que país nasceu o escritor Gabriel García Márquez, autor de 'Cem Anos de Solidão'?",
-        opcoes: ["México", "Argentina", "Peru", "Colômbia"],
-        correta: 3,
-        explicacao: "García Márquez nasceu em Aracataca, na Colômbia, em 1927, e recebeu o Nobel de Literatura em 1982.",
-        fonte: "Wikipédia — Gabriel García Márquez",
-        fonteUrl: "https://pt.wikipedia.org/wiki/Gabriel_Garc%C3%ADa_M%C3%A1rquez"
-      },
-      {
-        categoria: "Conhecimentos gerais",
-        pergunta: "Qual é a unidade monetária oficial do Japão?",
-        opcoes: ["Iene", "Won", "Yuan", "Baht"],
-        correta: 0,
-        explicacao: "A moeda oficial do Japão é o iene (yen), enquanto o won é da Coreia do Sul e o yuan, da China.",
-        fonte: "Wikipédia — Iene",
-        fonteUrl: "https://pt.wikipedia.org/wiki/Iene"
-      },
-      {
-        categoria: "Conhecimentos gerais",
-        pergunta: "Qual osso é o mais longo do corpo humano?",
-        opcoes: ["Úmero", "Tíbia", "Fíbula", "Fêmur"],
-        correta: 3,
-        explicacao: "O fêmur, na coxa, é o osso mais longo e mais resistente do corpo humano.",
-        fonte: "Wikipédia — Fêmur",
-        fonteUrl: "https://pt.wikipedia.org/wiki/F%C3%AAmur"
-      }
+      { categoria:"Em alta", pergunta:"A final da Copa do Mundo de 2026, marcada para 19 de julho, será disputada em qual estádio?", opcoes:["SoFi Stadium, em Los Angeles","MetLife Stadium, em Nova Jersey","AT&T Stadium, em Dallas","Mercedes-Benz Stadium, em Atlanta"], correta:1, explicacao:"A FIFA definiu o MetLife Stadium, em East Rutherford (Nova Jersey), como palco da final da Copa de 2026.", fonte:"Wikipédia — Final da Copa do Mundo FIFA de 2026", fonteUrl:"https://pt.wikipedia.org/wiki/Final_da_Copa_do_Mundo_FIFA_de_2026" },
+      { categoria:"Em alta", pergunta:"Qual equipe conquistou o título da NBA na temporada 2025–26, vencendo as finais em junho de 2026?", opcoes:["New York Knicks","Boston Celtics","San Antonio Spurs","Oklahoma City Thunder"], correta:0, explicacao:"O New York Knicks venceu o San Antonio Spurs por 4 a 1 e conquistou o título da NBA, com Jalen Brunson eleito MVP das finais.", fonte:"NBA.com — Jalen Brunson 2026 Finals MVP", fonteUrl:"https://www.nba.com/news/jalen-brunson-wins-bill-russell-trophy-as-2026-nba-finals-mvp" },
+      { categoria:"Em alta", pergunta:"Os Jogos Olímpicos de Inverno de 2026, realizados em fevereiro, tiveram a Itália como sede. Quais cidades dão nome ao evento?", opcoes:["Turim e Cortina","Roma e Milão","Milão e Cortina d'Ampezzo","Veneza e Bolzano"], correta:2, explicacao:"A edição foi oficialmente batizada de Milão-Cortina 2026, co-sediada por Milão e Cortina d'Ampezzo, no norte da Itália.", fonte:"Olympics.com — Milano Cortina 2026", fonteUrl:"https://www.olympics.com/en/olympic-games/milano-cortina-2026" },
+      { categoria:"Lógica", pergunta:"Maria é mais velha que João, e João é mais velho que Ana. Quem é necessariamente a mais nova dos três?", opcoes:["Maria","João","Ana","Não dá para saber"], correta:2, explicacao:"Como Maria > João > Ana em idade, Ana é necessariamente a mais nova.", fonte:"", fonteUrl:"" },
+      { categoria:"Lógica", pergunta:"Quantos minutos faltam para as 6h se agora são 4h45?", opcoes:["75 minutos","90 minutos","60 minutos","45 minutos"], correta:0, explicacao:"De 4h45 até 5h00 são 15 minutos, mais 60 minutos até 6h00, totalizando 75 minutos.", fonte:"", fonteUrl:"" },
+      { categoria:"Lógica", pergunta:"Complete a sequência: 1, 1, 2, 3, 5, 8, ?", opcoes:["11","12","13","15"], correta:2, explicacao:"É a sequência de Fibonacci: cada número é a soma dos dois anteriores, então 5 + 8 = 13.", fonte:"", fonteUrl:"" },
+      { categoria:"Conhecimentos gerais", pergunta:"Qual é a capital da Austrália?", opcoes:["Sydney","Melbourne","Camberra","Brisbane"], correta:2, explicacao:"A capital da Austrália é Camberra, planejada para evitar a rivalidade entre Sydney e Melbourne.", fonte:"Wikipédia — Camberra", fonteUrl:"https://pt.wikipedia.org/wiki/Camberra" },
+      { categoria:"Conhecimentos gerais", pergunta:"Qual é o gás mais abundante na atmosfera terrestre?", opcoes:["Oxigênio","Nitrogênio","Dióxido de carbono","Argônio"], correta:1, explicacao:"O nitrogênio compõe cerca de 78% da atmosfera, bem mais que o oxigênio (cerca de 21%).", fonte:"Wikipédia — Atmosfera da Terra", fonteUrl:"https://pt.wikipedia.org/wiki/Atmosfera_da_Terra" },
+      { categoria:"Conhecimentos gerais", pergunta:"Quem escreveu a peça 'Romeu e Julieta'?", opcoes:["William Shakespeare","Molière","Oscar Wilde","Anton Tchekhov"], correta:0, explicacao:"'Romeu e Julieta' foi escrita por William Shakespeare por volta do fim do século XVI.", fonte:"Wikipédia — Romeu e Julieta", fonteUrl:"https://pt.wikipedia.org/wiki/Romeu_e_Julieta" },
+      { categoria:"Conhecimentos gerais", pergunta:"Qual é o menor país do mundo em área territorial?", opcoes:["Mônaco","Nauru","Vaticano","San Marino"], correta:2, explicacao:"O Vaticano é o menor país do mundo, com cerca de 0,44 km² de área.", fonte:"Wikipédia — Vaticano", fonteUrl:"https://pt.wikipedia.org/wiki/Vaticano" }
+    ]
+  },
+  "2026-06-18": {
+    titulo: "Quiz do dia",
+    perguntas: [
+      { categoria:"Em alta", pergunta:"Qual time conquistou a Stanley Cup de 2026, encerrando o jejum de duas décadas ao vencer as finais em junho de 2026?", opcoes:["Vegas Golden Knights","Carolina Hurricanes","Edmonton Oilers","Florida Panthers"], correta:1, explicacao:"O Carolina Hurricanes venceu o Vegas Golden Knights e conquistou a Stanley Cup pela primeira vez desde 2006.", fonte:"NHL.com — Carolina Hurricanes Win 2026 Stanley Cup Final", fonteUrl:"https://www.nhl.com/hurricanes/news/carolina-hurricanes-win-2026-stanley-cup-final" },
+      { categoria:"Em alta", pergunta:"Qual país liderou o quadro geral de medalhas dos Jogos Olímpicos de Inverno de 2026, com recorde de ouros?", opcoes:["Estados Unidos","Alemanha","Noruega","Canadá"], correta:2, explicacao:"A Noruega liderou o quadro com 18 medalhas de ouro, recorde para uma única nação em Jogos de Inverno.", fonte:"NBC Olympics — Final medal count 2026 Milan Cortina", fonteUrl:"https://www.nbcolympics.com/news/final-medal-count-2026-milan-cortina-winter-olympics-and-paralympics" },
+      { categoria:"Em alta", pergunta:"O Centro Presidencial Barack Obama, com museu e biblioteca, abriu ao público em junho de 2026. Em qual cidade ele fica?", opcoes:["Washington, D.C.","Honolulu","Chicago","Nova York"], correta:2, explicacao:"O Obama Presidential Center fica no Jackson Park, em Chicago, e abriu ao público em 19 de junho de 2026.", fonte:"Obama Foundation — Grand Opening", fonteUrl:"https://www.obama.org/visit/grand-opening/faq/" },
+      { categoria:"Lógica", pergunta:"Um pai tem 40 anos e o filho tem 10. Daqui a quantos anos o pai terá exatamente o dobro da idade do filho?", opcoes:["10 anos","15 anos","20 anos","30 anos"], correta:2, explicacao:"Em x anos: 40 + x = 2 × (10 + x); resolvendo, 40 + x = 20 + 2x, logo x = 20 anos.", fonte:"", fonteUrl:"" },
+      { categoria:"Lógica", pergunta:"Se 3 gatos caçam 3 ratos em 3 minutos, quantos gatos são necessários para caçar 100 ratos em 100 minutos?", opcoes:["100 gatos","33 gatos","3 gatos","10 gatos"], correta:2, explicacao:"Cada gato caça 1 rato a cada 3 minutos, então em 100 minutos 3 gatos caçam cerca de 100 ratos: bastam 3 gatos.", fonte:"", fonteUrl:"" },
+      { categoria:"Lógica", pergunta:"Em uma corrida, você ultrapassa o corredor que está em segundo lugar. Em qual posição você fica?", opcoes:["Primeiro","Segundo","Terceiro","Depende dos demais"], correta:1, explicacao:"Ao ultrapassar o segundo colocado, você toma o lugar dele e passa a ocupar a segunda posição, não a primeira.", fonte:"", fonteUrl:"" },
+      { categoria:"Conhecimentos gerais", pergunta:"Em que continente fica o deserto do Saara?", opcoes:["Ásia","África","Oceania","América do Sul"], correta:1, explicacao:"O Saara é o maior deserto quente do mundo e está localizado no norte da África.", fonte:"Wikipédia — Deserto do Saara", fonteUrl:"https://pt.wikipedia.org/wiki/Deserto_do_Saara" },
+      { categoria:"Conhecimentos gerais", pergunta:"Quem desenvolveu a teoria da relatividade?", opcoes:["Isaac Newton","Niels Bohr","Albert Einstein","Galileu Galilei"], correta:2, explicacao:"Albert Einstein formulou as teorias da relatividade restrita (1905) e geral (1915).", fonte:"Wikipédia — Albert Einstein", fonteUrl:"https://pt.wikipedia.org/wiki/Albert_Einstein" },
+      { categoria:"Conhecimentos gerais", pergunta:"Qual é o oceano mais profundo do planeta?", opcoes:["Atlântico","Índico","Ártico","Pacífico"], correta:3, explicacao:"O Oceano Pacífico é o mais profundo, abrigando a Fossa das Marianas, ponto mais fundo dos oceanos.", fonte:"Wikipédia — Oceano Pacífico", fonteUrl:"https://pt.wikipedia.org/wiki/Oceano_Pac%C3%ADfico" },
+      { categoria:"Conhecimentos gerais", pergunta:"Quantos lados tem um hexágono?", opcoes:["5","6","7","8"], correta:1, explicacao:"Um hexágono é um polígono de seis lados e seis ângulos.", fonte:"Wikipédia — Hexágono", fonteUrl:"https://pt.wikipedia.org/wiki/Hex%C3%A1gono" }
     ]
   }
 };
