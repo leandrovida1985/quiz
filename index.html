@@ -579,7 +579,7 @@ document.getElementById("fecharAjuda").onclick=()=>document.getElementById("ajud
 document.getElementById("fecharAjudaX").onclick=()=>document.getElementById("ajudaOverlay").classList.remove("show");
 document.getElementById("fecharFim").onclick=()=>document.getElementById("fimOverlay").classList.remove("show");
 document.getElementById("voltarMenuFim").onclick=()=>{ document.getElementById("fimOverlay").classList.remove("show"); renderMenu(); mostrarTela("menuScreen"); };
-document.getElementById("verPlacarFim").onclick=verPlacar;
+document.getElementById("verPlacarFim").onclick=()=>{ document.getElementById("fimOverlay").classList.remove("show"); verPlacar(); };
 
 document.getElementById("loginBtn").onclick=async()=>{ const msg=document.getElementById("loginMsg"); msg.textContent="Entrando..."; try{ await fazerLogin(document.getElementById("loginNome").value, document.getElementById("loginPin").value); }catch(e){ msg.textContent=e.message||"Erro ao entrar."; } };
 document.getElementById("loginPin").addEventListener("keydown", e=>{ if(e.key==="Enter") document.getElementById("loginBtn").click(); });
