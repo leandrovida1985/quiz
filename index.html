@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Quiz do Dia</title>
+<meta name="theme-color" content="#c2492f">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Quiz do Dia">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<style>
+  :root {
+    --bg: #faf6ef; --ink: #1a1714; --muted: #8a8178; --line: #e2dacd;
+    --empty: #ffffff; --tile-border: #d6cdbf;
+    --certo: #5b8a4a; --posicao: #d8a13a; --erro: #c2492f;
+    --key: #ece5da; --accent: #c2492f; --shadow: rgba(40,32,24,.12);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; height: 100%; background: var(--bg); color: var(--ink);
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif; overscroll-behavior: none;
+  }
+  body { display: flex; flex-direction: column; max-width: 480px; margin: 0 auto; min-height: 100dvh; }
+  header { text-align: center; padding: 12px 0 8px; border-bottom: 1px solid var(--line); position: relative; }
+  header h1 { margin: 0; font-size: 28px; letter-spacing: .14em; font-weight: 800; text-transform: uppercase; }
+  header h1 b { color: var(--accent); }
+  header p { margin: 3px 0 0; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+  header p a { color: var(--accent); cursor: pointer; text-decoration: underline; }
+  .voltar { position: absolute; left: 12px; top: 15px; background: none; border: 1px solid var(--line); border-radius: 7px;
+    padding: 4px 10px; cursor: pointer; font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; display: none; }
+  .voltar:active { transform: translateY(1px); }
+  .rankbtn { position: absolute; right: 14px; top: 13px; background: none; border: none; cursor: pointer; font-size: 18px; line-height: 1; }
+  .helpbtn { position: absolute; right: 46px; top: 13px; background: none; border: none; cursor: pointer; font-size: 17px; line-height: 1; }
+
+  /* MENU */
+  .screen { flex: 1; display: none; flex-direction: column; }
+  .screen.show { display: flex; }
+  .menu-wrap { padding: 16px 14px 24px; }
+  .menu-intro { text-align: center; color: var(--muted); font-size: 13.5px; line-height: 1.5; margin: 4px 0 18px; }
+  .daycard { display: flex; align-items: center; gap: 12px; background: #fffdf9; border: 1px solid var(--line); border-radius: 14px;
+    padding: 14px; margin-bottom: 12px; cursor: pointer; box-shadow: 0 2px 8px var(--shadow); transition: transform .08s; }
+  .daycard:active { transform: scale(.99); }
+  .daycard .date { flex-shrink: 0; width: 56px; text-align: center; border-right: 1px solid var(--line); padding-right: 12px; }
+  .daycard .date .d { font-size: 24px; font-weight: 800; line-height: 1; }
+  .daycard .date .m { font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin-top: 2px; }
+  .daycard .info { flex: 1; min-width: 0; }
+  .daycard .info .t { font-size: 15px; font-weight: 700; line-height: 1.25; }
+  .daycard .info .pill { display: inline-block; margin-top: 6px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; padding: 3px 9px; border-radius: 20px; }
+  .pill.jogar { background: var(--accent); color: #fff; }
+  .pill.feito { background: #e9f0e3; color: var(--certo); }
+  .daycard .hoje { font-size: 10px; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: .1em; }
+
+  /* JOGO */
+  .qtop { padding: 12px 16px 8px; border-bottom: 1px solid var(--line); background: #fffdf9; }
+  .qtoprow { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--muted); font-weight: 700; }
+  .catbadge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; background: var(--key); color: var(--accent); }
+  .qbar-wrap { height: 6px; background: var(--line); border-radius: 4px; margin-top: 8px; overflow: hidden; }
+  #qbar { height: 100%; width: 10%; background: var(--accent); border-radius: 4px; transition: width .3s; }
+
+  .qbody { flex: 1; padding: 16px; }
+  .pergunta { font-size: 19px; font-weight: 700; line-height: 1.35; margin-bottom: 16px; }
+  .opcoes { display: flex; flex-direction: column; gap: 10px; }
+  .opt { text-align: left; border: 2px solid var(--tile-border); border-radius: 12px; padding: 14px 14px; font-size: 15.5px;
+    background: #fff; color: var(--ink); cursor: pointer; display: flex; align-items: center; gap: 12px; transition: border-color .15s, background .15s; }
+  .opt .letra { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--key); color: var(--ink);
+    font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+  .opt .txt { flex: 1; }
+  .opt:active { transform: scale(.995); }
+  .opt.sel { border-color: var(--accent); background: #fff6ee; }
+  .opt.sel .letra { background: var(--accent); color: #fff; }
+  .opt.elim { opacity: .45; text-decoration: line-through; cursor: default; pointer-events: none; }
+  .opt.certa { border-color: var(--certo); background: #eef5e9; }
+  .opt.certa .letra { background: var(--certo); color: #fff; }
+  .opt.errada { border-color: var(--erro); background: #fbece8; }
+  .opt.errada .letra { background: var(--erro); color: #fff; }
+
+  .dicaBtn2 { width: 100%; margin-top: 16px; background: none; border: 1px solid var(--line); border-radius: 10px;
+    padding: 11px; font-size: 13px; font-weight: 800; color: var(--accent); cursor: pointer; }
+  .dicaBtn2:disabled { color: var(--muted); cursor: default; }
+  .dicaBtn2:active { transform: translateY(1px); }
+
+  .qnav { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-top: 1px solid var(--line); }
+  .navbtn { background: var(--key); border: none; border-radius: 9px; padding: 10px 12px; font-size: 13px; font-weight: 800; color: var(--ink); cursor: pointer; }
+  .navbtn:disabled { opacity: .4; cursor: default; }
+  .dots { flex: 1; display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
+  .dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--tile-border); background: #fff; cursor: pointer; font-size: 0; }
+  .dot.resp { background: var(--accent); border-color: var(--accent); }
+  .dot.atual { box-shadow: 0 0 0 3px rgba(194,73,47,.25); }
+
+  .enviarwrap { padding: 8px 14px 16px; }
+  .btn { border: none; border-radius: 10px; padding: 13px 18px; font-size: 15px; font-weight: 700; cursor: pointer; background: var(--accent); color: #fff; width: 100%; }
+  .btn.ghost { background: var(--key); color: var(--ink); margin-top: 6px; }
+
+  .toast { position: fixed; top: 70px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg);
+    padding: 10px 18px; border-radius: 8px; font-size: 14px; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 30; box-shadow: 0 4px 14px var(--shadow); max-width: 90%; text-align: center; }
+  .toast.show { opacity: 1; }
+
+  /* Overlays */
+  .overlay { position: fixed; inset: 0; z-index: 40; background: rgba(26,23,20,.55); display: none; align-items: center; justify-content: center; padding: 20px; }
+  .overlay.show { display: flex; }
+  .modal { position: relative; background: var(--bg); border-radius: 16px; width: 100%; max-width: 380px; padding: 22px 20px; box-shadow: 0 14px 40px rgba(0,0,0,.35); animation: rise .3s ease; max-height: 88vh; overflow-y: auto; }
+  @keyframes rise { 0%{transform:translateY(20px);opacity:0} 100%{transform:translateY(0);opacity:1} }
+  .modal h2 { margin: 0 0 2px; font-size: 22px; text-align: center; }
+  .modal .sub { text-align: center; color: var(--muted); font-size: 13px; margin: 0 0 16px; }
+  .modal .big { color: var(--accent); font-weight: 800; }
+  .modalClose { position: absolute; top: 8px; right: 10px; background: none; border: none; cursor: pointer; font-size: 24px; line-height: 1; color: var(--muted); width: 32px; height: 32px; }
+  .namerow { display: flex; gap: 8px; margin-bottom: 16px; }
+  .namerow input { flex: 1; border: 2px solid var(--tile-border); border-radius: 8px; padding: 12px; font-size: 16px; background: #fff; color: var(--ink); text-transform: uppercase; }
+  .namerow input:focus { outline: none; border-color: var(--accent); }
+  #loginMsg { min-height: 16px; margin: 6px 0 0; color: var(--accent); font-size: 13px; text-align:center; }
+
+  .rank { list-style: none; margin: 0 0 14px; padding: 0; }
+  .rank li { display: flex; align-items: center; gap: 10px; padding: 8px 6px; border-bottom: 1px solid var(--line); font-size: 15px; }
+  .rank li:last-child { border-bottom: none; }
+  .rank .pos { width: 22px; font-weight: 800; color: var(--muted); text-align: center; }
+  .rank .who { flex: 1; font-weight: 600; text-transform: uppercase; }
+  .rank .pts { font-weight: 800; }
+  .rank .pts small { color: var(--muted); font-weight: 700; font-size: 11px; }
+  .rank li.me { background: #fff6ee; border-radius: 8px; }
+  .rank .empty { color: var(--muted); font-size: 13px; text-align: center; padding: 12px; }
+  .delPlayer { background:none; border:none; cursor:pointer; font-size:15px; color:var(--accent); padding:0 2px; margin-right:4px; }
+
+  /* Revisão final */
+  .rev { list-style: none; margin: 0 0 14px; padding: 0; }
+  .rev li { padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .rev li:last-child { border-bottom: none; }
+  .rev .rcat { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+  .rev .rq { font-size: 14.5px; font-weight: 700; margin: 3px 0 7px; line-height: 1.3; }
+  .rev .ra { font-size: 13.5px; margin: 2px 0; padding-left: 4px; }
+  .rev .ra.ok { color: var(--certo); font-weight: 700; }
+  .rev .ra.no { color: var(--erro); }
+  .rev .rexp { font-size: 12.5px; color: #5c544a; margin-top: 6px; line-height: 1.4; }
+  .rev .rfonte { font-size: 11px; }
+  .rev .rfonte a { color: var(--accent); }
+  .resumo { display: flex; justify-content: space-around; margin: 0 0 14px; text-align: center; }
+  .resumo div { flex: 1; }
+  .resumo .n { font-size: 20px; font-weight: 800; }
+  .resumo .l { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+
+  .ajudaTexto { text-align:left; font-size:13.5px; line-height:1.55; color:var(--ink); margin:0 0 14px; }
+  .ajudaTexto p { margin:0 0 10px; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>QUIZ<b> DO DIA</b></h1>
+    <p id="subtitle">10 perguntas por dia</p>
+    <button class="voltar" id="voltarBtn" title="Voltar ao menu">‹ Menu</button>
+    <button class="rankbtn" id="rankBtn" title="Ver o placar">🏆</button>
+    <button class="helpbtn" id="ajudaBtn" title="Como jogar">❓</button>
+  </header>
+
+  <!-- MENU -->
+  <div class="screen show" id="menuScreen">
+    <div class="menu-wrap">
+      <p class="menu-intro">Todo dia, <b>10 perguntas</b> de múltipla escolha.<br>Vale <b>uma vez</b> por dia — responda com calma!</p>
+      <div id="dayList"></div>
+    </div>
+  </div>
+
+  <!-- JOGO -->
+  <div class="screen" id="gameScreen">
+    <div class="qtop">
+      <div class="qtoprow">
+        <span><span id="qcat" class="catbadge"></span></span>
+        <span><span id="qnum">1</span>/10 · <span id="qdicas">0 dicas</span></span>
+      </div>
+      <div class="qbar-wrap"><div id="qbar"></div></div>
+    </div>
+    <div class="qbody">
+      <div class="pergunta" id="pergunta"></div>
+      <div class="opcoes" id="opcoes"></div>
+      <button class="dicaBtn2" id="dicaBtn">💡 Eliminar uma opção (−20)</button>
+    </div>
+    <div class="qnav">
+      <button class="navbtn" id="antBtn">‹</button>
+      <div class="dots" id="dots"></div>
+      <button class="navbtn" id="proxBtn">›</button>
+    </div>
+    <div class="enviarwrap"><button class="btn" id="enviarBtn">Revisar e enviar respostas</button></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- LOGIN -->
+  <div class="overlay" id="loginOverlay">
+    <div class="modal">
+      <button class="modalClose" id="fecharLogin" title="Fechar">×</button>
+      <h2>Entrar</h2>
+      <p class="sub">Digite seu nome e um PIN de 4 dígitos para competir em família. Na primeira vez, criamos seu perfil.</p>
+      <div class="namerow"><input id="loginNome" maxlength="12" placeholder="Seu nome" autocomplete="off"></div>
+      <div class="namerow">
+        <input id="loginPin" maxlength="4" inputmode="numeric" placeholder="PIN (4 dígitos)" autocomplete="off">
+        <button class="btn" id="loginBtn" style="width:auto;">Entrar</button>
+      </div>
+      <p class="sub" id="loginMsg"></p>
+      <button class="btn ghost" id="convidadoBtn">Jogar como convidado</button>
+    </div>
+  </div>
+
+  <!-- AJUDA -->
+  <div class="overlay" id="ajudaOverlay">
+    <div class="modal">
+      <button class="modalClose" id="fecharAjudaX" title="Fechar">×</button>
+      <h2>Como jogar</h2>
+      <p class="sub">10 perguntas de múltipla escolha por dia.</p>
+      <div class="ajudaTexto">
+        <p>Responda tocando numa das <b>4 opções</b>. Pode <b>trocar de ideia</b> e navegar entre as perguntas — nada é definitivo até você <b>enviar</b>.</p>
+        <p>Você começa com <b>1000 pontos</b>:</p>
+        <p>✅ Certa: <b>−0</b><br>⬜ Em branco: <b>−40</b><br>❌ Errada: <b>−100</b></p>
+        <p>Travou? A <b>💡 dica</b> elimina uma opção errada por <b>−20</b> (no máximo <b>2 por pergunta</b> — sempre sobram 2).</p>
+        <p>Como errar custa mais que deixar em branco, às vezes vale mais <b>não chutar</b>. Vale <b>um quiz por dia</b>; seu total entra no <b>placar</b> 🏆 da família.</p>
+      </div>
+      <button class="btn ghost" id="fecharAjuda">Entendi</button>
+    </div>
+  </div>
+
+  <!-- PLACAR -->
+  <div class="overlay" id="placarOverlay">
+    <div class="modal">
+      <button class="modalClose" id="fecharPlacar" title="Fechar">×</button>
+      <h2>Placar</h2>
+      <p class="sub">Total de pontos da família</p>
+      <ul class="rank" id="rankListView"></ul>
+      <button class="btn ghost" id="fecharPlacar2">Fechar</button>
+    </div>
+  </div>
+
+  <!-- RESULTADO -->
+  <div class="overlay" id="fimOverlay">
+    <div class="modal">
+      <button class="modalClose" id="fecharFim" title="Fechar">×</button>
+      <h2 id="fimTitle">Resultado</h2>
+      <p class="sub" id="fimSub"></p>
+      <div class="resumo" id="resumo"></div>
+      <ul class="rev" id="revList"></ul>
+      <button class="btn ghost" id="verPlacarFim">Ver o placar 🏆</button>
+      <button class="btn ghost" id="voltarMenuFim">Voltar ao menu</button>
+    </div>
+  </div>
+
+<script src="config.js"></script>
+<script src="quiz-dados.js"></script>
+<script>
+// ===== Constantes de pontuação =====
+const BASE = 1000, PEN_ERRADA = 100, PEN_BRANCO = 40, PEN_ELIM = 20, MAX_ELIM = 2;
+const PUZZLES = window.QUIZ_PUZZLES || {};
+const LETRAS = ["A","B","C","D"];
+
+// ===== Datas =====
+function hojeStr(){ const d=new Date(); const z=x=>String(x).padStart(2,"0"); return d.getFullYear()+"-"+z(d.getMonth()+1)+"-"+z(d.getDate()); }
+const MESES = ["JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"];
+function partesData(iso){ const [y,m,d]=iso.split("-").map(Number); return { dia:d, mes:MESES[m-1] }; }
+
+// ===== Estado =====
+let jogador = null;   // { nome, pin, total, dias, jogadas:{data:pontos} }
+let placar  = [];
+let jogo = null;      // { data, puzzle, respostas[], elim[], idx, fim }
+
+// ===== Supabase =====
+const SB_URL = (window.SUPABASE_URL || "").replace(/\/+$/, "");
+const SB_KEY = window.SUPABASE_KEY || "";
+const SB_OK  = !!(SB_URL && SB_KEY);
+const ADMIN  = "LEANDRO VIDA";
+
+async function rpc(fn, args){
+  const r = await fetch(SB_URL + "/rest/v1/rpc/" + fn, {
+    method: "POST",
+    headers: { apikey: SB_KEY, Authorization: "Bearer " + SB_KEY, "Content-Type": "application/json" },
+    body: JSON.stringify(args)
+  });
+  if(!r.ok) throw new Error("Erro no servidor (" + r.status + ")");
+  const txt = await r.text();
+  return txt ? JSON.parse(txt) : null;
+}
+function localDB(){ try { return JSON.parse(localStorage.getItem("quiz_jogadores")) || {}; } catch(e){ return {}; } }
+function salvarLocalDB(db){ try { localStorage.setItem("quiz_jogadores", JSON.stringify(db)); } catch(e){} }
+
+async function entrar(nome, pin){
+  nome=(nome||"").trim().toUpperCase().slice(0,12); pin=(pin||"").trim();
+  if(!nome) throw new Error("Digite seu nome.");
+  if(!/^\d{4}$/.test(pin)) throw new Error("O PIN deve ter 4 dígitos.");
+  if(SB_OK){
+    const rows = await rpc("entrar_quiz", { p_nome: nome, p_pin: pin });
+    const d = Array.isArray(rows) ? rows[0] : rows;
+    if(!d) throw new Error("Não foi possível entrar.");
+    if(d.ok === false) throw new Error("Nome já em uso. Se for você, digite o PIN certo; senão, escolha outro nome.");
+    return { nome, pin, total: d.total||0, dias: d.dias||0, jogadas: d.jogadas || {} };
+  }
+  const db = localDB();
+  if(db[nome]){ if(db[nome].pin!==pin) throw new Error("Nome já em uso. Se for você, digite o PIN certo; senão, escolha outro nome."); }
+  else { db[nome]={ pin, total:0, dias:0, jogadas:{} }; salvarLocalDB(db); }
+  const j=db[nome];
+  return { nome, pin, total:j.total, dias:j.dias, jogadas:j.jogadas||{} };
+}
+
+async function registrarDia(data, pontos){
+  if(!jogador) return;
+  if(SB_OK){
+    try {
+      const rows = await rpc("registrar_dia_quiz", { p_nome: jogador.nome, p_pin: jogador.pin, p_data: data, p_pontos: pontos });
+      const d = Array.isArray(rows) ? rows[0] : rows;
+      if(d){ jogador.total=d.total; jogador.dias=d.dias; jogador.jogadas=d.jogadas||jogador.jogadas; }
+      return;
+    } catch(e){ console.error(e); return; }
+  }
+  const db=localDB();
+  const j=db[jogador.nome] || { pin:jogador.pin, total:0, dias:0, jogadas:{} };
+  if(!(data in (j.jogadas||{}))){ j.jogadas=j.jogadas||{}; j.jogadas[data]=pontos; j.total=(j.total||0)+Math.max(pontos,0); j.dias=(j.dias||0)+1; }
+  db[jogador.nome]=j; salvarLocalDB(db);
+  jogador.total=j.total; jogador.dias=j.dias; jogador.jogadas=j.jogadas;
+}
+
+async function carregarPlacar(){
+  if(SB_OK){
+    try {
+      const r = await fetch(SB_URL + "/rest/v1/placar_quiz?select=nome,total,dias&order=total.desc&limit=50", {
+        headers: { apikey: SB_KEY, Authorization: "Bearer " + SB_KEY } });
+      if(r.ok){ placar = await r.json(); return; }
+    } catch(e){}
+  }
+  const db=localDB();
+  placar = Object.keys(db).map(n=>({ nome:n, total:db[n].total||0, dias:db[n].dias||0 })).sort((a,b)=>b.total-a.total);
+}
+
+// ===== Telas =====
+function mostrarTela(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("show"));
+  document.getElementById(id).classList.add("show");
+  document.getElementById("voltarBtn").style.display = (id!=="menuScreen") ? "block" : "none";
+}
+function atualizarHeader(){
+  const sub=document.getElementById("subtitle");
+  if(jogador){ sub.innerHTML=`Olá, <b>${jogador.nome}</b> · <a id="trocar">trocar</a>`; document.getElementById("trocar").onclick=trocarJogador; }
+  else { sub.innerHTML=`<b>convidado</b> · <a id="entrarLink">entrar</a>`; document.getElementById("entrarLink").onclick=mostrarLogin; }
+}
+function diasDisponiveis(){ const hj=hojeStr(); return Object.keys(PUZZLES).filter(d=>d<=hj).sort().reverse(); }
+function jaJogou(data){ return jogador && jogador.jogadas && (data in jogador.jogadas); }
+
+function renderMenu(){
+  const lista=document.getElementById("dayList");
+  const dias=diasDisponiveis();
+  if(dias.length===0){ lista.innerHTML=`<p class="menu-intro">Nenhum quiz disponível ainda. Volte em breve!</p>`; return; }
+  const hj=hojeStr();
+  lista.innerHTML = dias.map(data=>{
+    const p=PUZZLES[data]; const dp=partesData(data);
+    const feito=jaJogou(data); const pts=feito?jogador.jogadas[data]:null;
+    const pill = feito ? `<span class="pill feito">Já jogou · ${pts} pts</span>` : `<span class="pill jogar">Jogar</span>`;
+    const hoje = (data===hj) ? `<span class="hoje">Hoje</span> ` : "";
+    return `<div class="daycard" data-data="${data}">
+      <div class="date"><div class="d">${dp.dia}</div><div class="m">${dp.mes}</div></div>
+      <div class="info"><div class="t">${hoje}${p.titulo||"Quiz do dia"}</div>${pill}</div></div>`;
+  }).join("");
+  lista.querySelectorAll(".daycard").forEach(c=> c.onclick=()=>abrirDia(c.dataset.data));
+}
+
+// ===== Partida em andamento (resume) =====
+function chaveJogo(data){ return "quiz_partida_"+(jogador?jogador.nome:"@conv")+"_"+data; }
+function salvarJogo(){
+  if(!jogo) return;
+  try { localStorage.setItem(chaveJogo(jogo.data), JSON.stringify({ respostas: jogo.respostas, elim: jogo.elim.map(s=>[...s]) })); } catch(e){}
+}
+function limparJogo(data){ try { localStorage.removeItem(chaveJogo(data)); } catch(e){} }
+
+function abrirDia(data){
+  const p=PUZZLES[data]; if(!p) return;
+  if(jaJogou(data)){ mostrarResultado(data, jogador.jogadas[data], { revisao:true }); return; }
+  let sv=null; try { sv=JSON.parse(localStorage.getItem(chaveJogo(data))); } catch(e){}
+  const n=p.perguntas.length;
+  jogo = {
+    data, puzzle:p, idx:0, fim:false,
+    respostas: (sv && Array.isArray(sv.respostas) && sv.respostas.length===n) ? sv.respostas : Array(n).fill(null),
+    elim: (sv && Array.isArray(sv.elim) && sv.elim.length===n) ? sv.elim.map(a=>new Set(a)) : Array.from({length:n},()=>new Set())
+  };
+  mostrarTela("gameScreen");
+  renderPergunta();
+}
+
+function totalElim(){ return jogo.elim.reduce((s,e)=>s+e.size,0); }
+
+function renderPergunta(){
+  const p=jogo.puzzle; const i=jogo.idx; const q=p.perguntas[i]; const n=p.perguntas.length;
+  document.getElementById("qcat").textContent = q.categoria || "Pergunta";
+  document.getElementById("qnum").textContent = (i+1);
+  document.getElementById("qdicas").textContent = totalElim()===0 ? "0 dicas" : `${totalElim()} ${totalElim()===1?"dica":"dicas"}`;
+  document.getElementById("qbar").style.width = (100*(i+1)/n)+"%";
+  document.getElementById("pergunta").textContent = q.pergunta;
+
+  const cont=document.getElementById("opcoes");
+  cont.innerHTML = q.opcoes.map((op,oi)=>{
+    const sel = jogo.respostas[i]===oi ? " sel" : "";
+    const eli = jogo.elim[i].has(oi) ? " elim" : "";
+    return `<button class="opt${sel}${eli}" data-oi="${oi}"><span class="letra">${LETRAS[oi]}</span><span class="txt">${op}</span></button>`;
+  }).join("");
+  cont.querySelectorAll(".opt").forEach(b=> b.onclick=()=>selecionar(+b.dataset.oi));
+
+  const db=document.getElementById("dicaBtn");
+  const podeDica = jogo.elim[i].size < MAX_ELIM;
+  db.disabled = !podeDica;
+  db.textContent = podeDica ? `💡 Eliminar uma opção (−${PEN_ELIM})` : "Sem mais dicas nesta pergunta";
+
+  document.getElementById("antBtn").disabled = (i===0);
+  document.getElementById("proxBtn").disabled = (i===n-1);
+
+  const dots=document.getElementById("dots");
+  dots.innerHTML = p.perguntas.map((_,di)=>{
+    const resp = jogo.respostas[di]!==null ? " resp" : "";
+    const at = di===i ? " atual" : "";
+    return `<button class="dot${resp}${at}" data-di="${di}"></button>`;
+  }).join("");
+  dots.querySelectorAll(".dot").forEach(d=> d.onclick=()=>{ jogo.idx=+d.dataset.di; renderPergunta(); });
+}
+
+function selecionar(oi){
+  const i=jogo.idx;
+  if(jogo.elim[i].has(oi)) return;
+  jogo.respostas[i] = (jogo.respostas[i]===oi) ? null : oi;  // tocar de novo desmarca (deixa em branco)
+  salvarJogo();
+  renderPergunta();
+}
+
+function pedirDica(){
+  const i=jogo.idx;
+  const pergunta=jogo.puzzle.perguntas[i];
+  if(jogo.elim[i].size >= MAX_ELIM) return;
+  // candidatos: opções erradas, não eliminadas e não selecionadas pelo jogador
+  const cand=[];
+  for(let oi=0; oi<pergunta.opcoes.length; oi++){
+    if(oi===pergunta.correta) continue;
+    if(jogo.elim[i].has(oi)) continue;
+    if(jogo.respostas[i]===oi) continue;
+    cand.push(oi);
+  }
+  if(cand.length===0) return;
+  const escolhido = cand[Math.floor(Math.random()*cand.length)];
+  jogo.elim[i].add(escolhido);
+  salvarJogo();
+  renderPergunta();
+  toast(`Opção eliminada · −${PEN_ELIM}`);
+}
+
+function enviar(){
+  const brancas = jogo.respostas.filter(r=>r===null).length;
+  const msg = brancas>0
+    ? `Você deixou ${brancas} ${brancas===1?"pergunta em branco":"perguntas em branco"} (−${brancas*PEN_BRANCO}). Enviar mesmo assim?`
+    : `Enviar suas respostas? Não dá pra mudar depois.`;
+  if(!confirm(msg)) return;
+  finalizar();
+}
+
+function finalizar(){
+  if(jogo.fim) return;
+  jogo.fim = true;
+  const p=jogo.puzzle;
+  let certas=0, erradas=0, brancas=0;
+  p.perguntas.forEach((q,i)=>{
+    const r=jogo.respostas[i];
+    if(r===null) brancas++;
+    else if(r===q.correta) certas++;
+    else erradas++;
+  });
+  const elim=totalElim();
+  const pontos = Math.max(BASE - erradas*PEN_ERRADA - brancas*PEN_BRANCO - elim*PEN_ELIM, 0);
+  limparJogo(jogo.data);
+  registrarDia(jogo.data, pontos).then(()=>{
+    mostrarResultado(jogo.data, pontos, { certas, erradas, brancas, elim, respostas: jogo.respostas.slice() });
+  });
+}
+
+function mostrarResultado(data, pontos, opts){
+  opts=opts||{};
+  const p=PUZZLES[data];
+  document.getElementById("fimTitle").textContent = opts.revisao ? "Você já jogou este dia" : "Resultado";
+
+  let sub;
+  if(opts.revisao){
+    sub = `Você fez <span class="big">${pontos}</span> pontos neste quiz.`;
+  } else {
+    sub = `Você acertou <span class="big">${opts.certas}</span> de 10 e fez <span class="big">${pontos}</span> pontos.`;
+    if(jogador) sub += `<br>Seu total: <span class="big">${jogador.total}</span> pts em ${jogador.dias} ${jogador.dias===1?"dia":"dias"}.`;
+    else sub += `<br>Entre com nome e PIN para salvar seu placar.`;
+  }
+  document.getElementById("fimSub").innerHTML = sub;
+
+  const resumo=document.getElementById("resumo");
+  if(opts.revisao){ resumo.innerHTML=""; }
+  else {
+    resumo.innerHTML =
+      `<div><div class="n" style="color:var(--certo)">${opts.certas}</div><div class="l">Certas</div></div>`+
+      `<div><div class="n" style="color:var(--erro)">${opts.erradas}</div><div class="l">Erradas</div></div>`+
+      `<div><div class="n" style="color:var(--muted)">${opts.brancas}</div><div class="l">Brancas</div></div>`+
+      `<div><div class="n">${opts.elim}</div><div class="l">Dicas</div></div>`;
+  }
+
+  const minhas = opts.respostas || null;
+  document.getElementById("revList").innerHTML = p.perguntas.map((q,i)=>{
+    const linhas = q.opcoes.map((op,oi)=>{
+      const ehCorreta = oi===q.correta;
+      const ehMinha = minhas && minhas[i]===oi;
+      let cls="", tag="";
+      if(ehCorreta){ cls=" ok"; tag=" ✓"; }
+      else if(ehMinha){ cls=" no"; tag=" ✗ (sua resposta)"; }
+      if(!ehCorreta && !ehMinha) return "";
+      return `<div class="ra${cls}">${LETRAS[oi]}. ${op}${tag}</div>`;
+    }).filter(Boolean).join("");
+    const brancaTag = (minhas && minhas[i]===null) ? `<div class="ra" style="color:var(--muted)">Você deixou em branco</div>` : "";
+    const fonte = q.fonte ? `<div class="rfonte">Fonte: ${q.fonteUrl?`<a href="${q.fonteUrl}" target="_blank" rel="noopener">${q.fonte}</a>`:q.fonte}</div>` : "";
+    return `<li>
+      <div class="rcat">${q.categoria||""}</div>
+      <div class="rq">${i+1}. ${q.pergunta}</div>
+      ${linhas}${brancaTag}
+      <div class="rexp">${q.explicacao||""}</div>${fonte}
+    </li>`;
+  }).join("");
+
+  document.getElementById("fimOverlay").classList.add("show");
+  carregarPlacar();
+}
+
+// ===== Placar =====
+function renderPlacar(alvo){
+  const ol=document.getElementById(alvo);
+  if(!placar || placar.length===0){ ol.innerHTML=`<li class="empty">Ninguém pontuou ainda — seja o primeiro!</li>`; return; }
+  const admin = jogador && jogador.nome===ADMIN;
+  const top=[...placar].sort((a,b)=>b.total-a.total).slice(0,15);
+  ol.innerHTML = top.map((e,i)=>{
+    const me = (jogador && e.nome===jogador.nome) ? " me" : "";
+    const del = (admin && e.nome!==jogador.nome) ? `<button class="delPlayer" data-nome="${e.nome}" title="Excluir jogador">🗑</button>` : "";
+    return `<li class="${me.trim()}">${del}<span class="pos">${i+1}</span><span class="who">${e.nome}</span><span class="pts">${e.total} pts<small> · ${e.dias||0}d</small></span></li>`;
+  }).join("");
+  ol.querySelectorAll(".delPlayer").forEach(btn=> btn.onclick=()=>excluirJogador(btn.dataset.nome, alvo));
+}
+async function excluirJogador(nome, alvoId){
+  if(!jogador || jogador.nome!==ADMIN) return;
+  if(!confirm("Excluir o jogador "+nome+"? Isso apaga o placar dele.")) return;
+  try {
+    if(SB_OK) await rpc("excluir_quiz", { p_alvo: nome, p_admin_nome: jogador.nome, p_admin_pin: jogador.pin });
+    else { const db=localDB(); delete db[nome]; salvarLocalDB(db); }
+    await carregarPlacar(); renderPlacar(alvoId); toast(nome+" foi removido");
+  } catch(e){ console.error(e); toast("Não foi possível excluir"); }
+}
+async function verPlacar(){ renderPlacar("rankListView"); document.getElementById("placarOverlay").classList.add("show"); await carregarPlacar(); renderPlacar("rankListView"); }
+
+// ===== Toast =====
+function toast(msg){ const el=document.getElementById("toast"); el.textContent=msg; el.classList.add("show"); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove("show"),1600); }
+
+// ===== Login UI =====
+const LS_SESSION="quiz_sessao";
+function mostrarLogin(){ document.getElementById("loginMsg").textContent=""; document.getElementById("loginPin").value=""; document.getElementById("loginOverlay").classList.add("show"); setTimeout(()=>document.getElementById("loginNome").focus(),100); }
+async function fazerLogin(nome,pin){ const j=await entrar(nome,pin); jogador=j; try{ localStorage.setItem(LS_SESSION, JSON.stringify({nome:j.nome,pin:j.pin})); }catch(e){} document.getElementById("loginOverlay").classList.remove("show"); atualizarHeader(); renderMenu(); carregarPlacar(); }
+function trocarJogador(){ mostrarLogin(); }
+function jogarConvidado(){ jogador=null; try{ localStorage.removeItem(LS_SESSION); }catch(e){} document.getElementById("loginOverlay").classList.remove("show"); atualizarHeader(); renderMenu(); }
+
+// ===== Eventos =====
+document.getElementById("antBtn").onclick=()=>{ if(jogo.idx>0){ jogo.idx--; renderPergunta(); } };
+document.getElementById("proxBtn").onclick=()=>{ if(jogo.idx<jogo.puzzle.perguntas.length-1){ jogo.idx++; renderPergunta(); } };
+document.getElementById("dicaBtn").onclick=pedirDica;
+document.getElementById("enviarBtn").onclick=enviar;
+document.getElementById("voltarBtn").onclick=()=>{ renderMenu(); mostrarTela("menuScreen"); };
+
+document.getElementById("rankBtn").onclick=verPlacar;
+document.getElementById("fecharPlacar").onclick=()=>document.getElementById("placarOverlay").classList.remove("show");
+document.getElementById("fecharPlacar2").onclick=()=>document.getElementById("placarOverlay").classList.remove("show");
+document.getElementById("ajudaBtn").onclick=()=>document.getElementById("ajudaOverlay").classList.add("show");
+document.getElementById("fecharAjuda").onclick=()=>document.getElementById("ajudaOverlay").classList.remove("show");
+document.getElementById("fecharAjudaX").onclick=()=>document.getElementById("ajudaOverlay").classList.remove("show");
+document.getElementById("fecharFim").onclick=()=>document.getElementById("fimOverlay").classList.remove("show");
+document.getElementById("voltarMenuFim").onclick=()=>{ document.getElementById("fimOverlay").classList.remove("show"); renderMenu(); mostrarTela("menuScreen"); };
+document.getElementById("verPlacarFim").onclick=verPlacar;
+
+document.getElementById("loginBtn").onclick=async()=>{ const msg=document.getElementById("loginMsg"); msg.textContent="Entrando..."; try{ await fazerLogin(document.getElementById("loginNome").value, document.getElementById("loginPin").value); }catch(e){ msg.textContent=e.message||"Erro ao entrar."; } };
+document.getElementById("loginPin").addEventListener("keydown", e=>{ if(e.key==="Enter") document.getElementById("loginBtn").click(); });
+document.getElementById("fecharLogin").onclick=()=>{ document.getElementById("loginOverlay").classList.remove("show"); if(!jogador){ atualizarHeader(); renderMenu(); } };
+document.getElementById("convidadoBtn").onclick=jogarConvidado;
+
+// ===== Início =====
+(async function init(){
+  atualizarHeader(); renderMenu();
+  let sess=null; try{ sess=JSON.parse(localStorage.getItem(LS_SESSION)); }catch(e){}
+  if(sess && sess.nome && sess.pin){ try{ await fazerLogin(sess.nome, sess.pin); return; }catch(e){} }
+  mostrarLogin();
+})();
+</script>
+</body>
+</html>
